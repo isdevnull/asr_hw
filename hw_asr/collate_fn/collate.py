@@ -34,6 +34,7 @@ def collate_fn(dataset_items: List[dict]):
     result_batch["spectrogram"] = pad_sequence(spectrograms, batch_first=True)
     result_batch["text_encoded"] = pad_sequence(texts_encoded, batch_first=True)
     result_batch["text_encoded_length"] = torch.Tensor(texts_encoded_length).int()
+    result_batch["spectrogram_length"] = torch.Tensor(spectrograms_length).int()
     result_batch["text"] = texts
 
     return result_batch
