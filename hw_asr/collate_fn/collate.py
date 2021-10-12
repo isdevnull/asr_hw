@@ -14,12 +14,15 @@ def collate_fn(dataset_items: List[dict]):
 
     result_batch = {}
     spectrograms = []
+    spectrograms_length = []
     texts = []
     texts_encoded = []
     texts_encoded_length = []
     # iterate over items
     for item in dataset_items:
-        spectrograms.append(item["spectrogram"].squeeze(0).T)
+        squeezed_spectrogram = item["spectrogram"].squeeze(0).T
+        spectrograms.append(squeezed_spectrogram)
+        spectrograms_length.append(squeezed_spectrogram.shape[0])
 
         texts.append(item["text"])
 
