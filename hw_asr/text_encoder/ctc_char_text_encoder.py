@@ -19,8 +19,9 @@ class CTCCharTextEncoder(CharTextEncoder):
             self.ind2char[max(self.ind2char.keys()) + 1] = text
         self.char2ind = {v: k for k, v in self.ind2char.items()}
 
-    def ctc_decode(self, inds: List[int]) -> str:
-        return "".join([c for c in [self.ind2char[t] for t, _ in groupby(inds)] if c != self.EMPTY_TOK])
+    def ctc_decode(self, inds: torch.tensor) -> str:
+        token_inds = inds.tolist()
+        return "".join([c for c in [self.ind2char[t] for t, _ in groupby(token_inds)] if c != self.EMPTY_TOK])
 
     def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100) -> List[Tuple[str, float]]:
         """
