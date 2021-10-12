@@ -4,6 +4,8 @@ import torch
 
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 
+from itertools import groupby
+
 
 class CTCCharTextEncoder(CharTextEncoder):
     EMPTY_TOK = "^"
@@ -18,8 +20,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         self.char2ind = {v: k for k, v in self.ind2char.items()}
 
     def ctc_decode(self, inds: List[int]) -> str:
-        # TODO: your code here
-        raise NotImplementedError()
+        return "".join([c for c in [self.ind2char[t] for t, _ in groupby(inds)] if c != self.EMPTY_TOK])
 
     def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100) -> List[Tuple[str, float]]:
         """

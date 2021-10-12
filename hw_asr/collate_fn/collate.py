@@ -1,6 +1,9 @@
 import logging
 from typing import List
 
+import torch
+from torch.nn.utils.rnn import pad_sequence
+
 logger = logging.getLogger(__name__)
 
 
@@ -10,5 +13,24 @@ def collate_fn(dataset_items: List[dict]):
     """
 
     result_batch = {}
-    # TODO: your code here
-    raise NotImplementedError
+    spectrograms = []
+    texts = []
+    texts_encoded = []
+    texts_encoded_length = []
+    # iterate over items
+    for item in dataset_items:
+        spectrograms.append(item["spectrogram"].squeeze(0).T)
+
+        texts.append(item["text"])
+
+        squeezed_text_encoded = item["text_encoded"].squeeze(0)
+        texts_encoded.append(squeezed_text_encoded)
+        texts_encoded_length.append(len(squeezed_text_encoded))
+
+    # form batch
+    result_batch["spectrogram"] = pad_sequence(spectrograms, batch_first=True)
+    result_batch["text_encoded"] = pad_sequence(texts_encoded, batch_first=True)
+    result_batch["text_encoded_length"] = torch.Tensor(texts_encoded_length).int()
+    result_batch["text"] = texts
+
+    return result_batch
