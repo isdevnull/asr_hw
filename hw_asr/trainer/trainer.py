@@ -221,10 +221,10 @@ class Trainer(BaseTrainer):
             wer = calc_wer(norm_target, pred) * 100
             cer = calc_cer(norm_target, pred) * 100
             to_log_pred.append(
-                f"true: '{target}' | pred: '{pred}' "
+                f"true: '{norm_target}' | pred: '{pred}' "
                 f"| wer: {wer:.2f} | cer: {cer:.2f}"
             )
-            to_log_pred_raw.append(f"true: '{target}' | pred: '{raw_pred}'\n")
+            to_log_pred_raw.append(f"true: '{norm_target}' | pred: '{raw_pred}'\n")
         self.writer.add_text(f"predictions", "< < < < > > > >".join(to_log_pred))
         self.writer.add_text(
             f"predictions_raw", "< < < < > > > >".join(to_log_pred_raw)
