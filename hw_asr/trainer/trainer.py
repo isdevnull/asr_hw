@@ -115,7 +115,7 @@ class Trainer(BaseTrainer):
                     "learning rate", self.lr_scheduler.get_last_lr()[0]
                 )
                 self._log_predictions(part="train", **batch)
-                self._log_spectrogram(batch["spectrogram"])
+                self._log_spectrogram(batch["spectrogram"], batch["spectrogram_length"])
                 self._log_scalars(self.train_metrics)
             if batch_idx >= self.len_epoch:
                 break
@@ -177,7 +177,7 @@ class Trainer(BaseTrainer):
             self.writer.set_step(epoch * self.len_epoch, "valid")
             self._log_scalars(self.valid_metrics)
             self._log_predictions(part="val", **batch)
-            self._log_spectrogram(batch["spectrogram"])
+            self._log_spectrogram(batch["spectrogram"], batch["spectrogram_length"])
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
@@ -229,9 +229,10 @@ class Trainer(BaseTrainer):
             f"predictions_raw", "< < < < > > > >".join(to_log_pred_raw)
         )
 
-    def _log_spectrogram(self, spectrogram_batch):
-        spectrogram = random.choice(spectrogram_batch)
-        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.cpu().log()))
+    def _log_spectrogram(self, spectrogram_batch, spectrogram_length):
+        zipped_values = list(zip(spectrogram_batch, spectrogram_length))
+        spectrogram, spectrogram_len = random.choice(zipped_values)
+        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.T[:, :spectrogram_len].cpu().log()))
         self.writer.add_image("spectrogram", ToTensor()(image))
 
     @torch.no_grad()
