@@ -100,10 +100,8 @@ class BaseDataset(Dataset):
     ) -> list:
         initial_size = len(index)
         if max_audio_length is not None:
-            exceeds_audio_length = set(
-                [el['path'] for el in index if el["audio_len"] >= max_audio_length]
-            )
-            _total = len(exceeds_audio_length)
+            exceeds_audio_length = np.array([el["length"] for el in index]) >= max_audio_length
+            _total = exceeds_audio_length.sum()
             logger.info(
                 f"{_total} ({_total / initial_size:.1%}) records are longer then "
                 f"{max_audio_length} seconds. Excluding them."
@@ -112,15 +110,13 @@ class BaseDataset(Dataset):
             exceeds_audio_length = False
 
         initial_size = len(index)
+
         if max_text_length is not None:
-            exceeds_text_length = set(
+            exceeds_text_length = np.array(
                 [
-                    el['path']
-                    for el in index
-                    if len(BaseTextEncoder.normalize_text(el["text"])) >= max_text_length
-                ]
-            )
-            _total = len(exceeds_text_length)
+                    len(BaseTextEncoder.normalize_text(el["text"]))
+                    for el in index]) >= max_text_length
+            _total = exceeds_text_length.sum()
             logger.info(
                 f"{_total} ({_total / initial_size:.1%}) records are longer then "
                 f"{max_text_length} characters. Excluding them."
@@ -130,11 +126,11 @@ class BaseDataset(Dataset):
 
         records_to_filter = exceeds_text_length | exceeds_audio_length
 
-        if records_to_filter is not False:
-            _total = len(records_to_filter)
-            index = [el for el in index if el['path'] not in records_to_filter]
+        if records_to_filter is not False and records_to_filter.any():
+            _total = records_to_filter.sum()
+            index = [el for el, exclude in zip(index, records_to_filter) if not exclude]
             logger.info(
-                f"Filtered {_total}({_total / initial_size:.1%}) records from dataset"
+                f"Filtered {_total}({_total / initial_size:.1%}) records  from dataset"
             )
 
         if limit is not None:
