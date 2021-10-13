@@ -14,8 +14,12 @@ class WanDBWriter:
             if config['trainer'].get('wandb_project') is None:
                 raise ValueError("please specify project name for wandb")
 
+            if config['trainer'].get('wandb_entity') is None:
+                raise ValueError("Please specify wandb entity")
+
             wandb.init(
                 project=config['trainer'].get('wandb_project'),
+                entity=config['trainer'].get('wandb_entity'),
                 config=config.config
             )
             self.wandb = wandb
