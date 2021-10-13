@@ -4,11 +4,7 @@ import torch
 from numpy import inf
 
 from hw_asr.base import BaseModel
-<<<<<<< HEAD
-from hw_asr.logger import TensorboardWriter
-=======
 from hw_asr.logger import get_visualizer
->>>>>>> template_hw_asr/hw_asr_2021
 
 
 class BaseTrainer:
@@ -52,13 +48,8 @@ class BaseTrainer:
         self.checkpoint_dir = config.save_dir
 
         # setup visualization writer instance
-<<<<<<< HEAD
-        self.writer = TensorboardWriter(
-            config.log_dir, self.logger, cfg_trainer["tensorboard"]
-=======
         self.writer = get_visualizer(
             config, self.logger, cfg_trainer["visualize"]
->>>>>>> template_hw_asr/hw_asr_2021
         )
 
         if config.resume is not None:
