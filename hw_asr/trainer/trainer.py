@@ -9,6 +9,7 @@ from torchvision.transforms import ToTensor
 from tqdm import tqdm
 
 from hw_asr.base import BaseTrainer
+from hw_asr.base.base_text_encoder import BaseTextEncoder
 from hw_asr.logger.utils import plot_spectrogram_to_buf
 from hw_asr.metric.utils import calc_cer, calc_wer
 from hw_asr.utils import inf_loop, MetricTracker
@@ -216,8 +217,9 @@ class Trainer(BaseTrainer):
         to_log_pred = []
         to_log_pred_raw = []
         for pred, target, raw_pred in tuples[:examples_to_log]:
-            wer = calc_wer(target, pred) * 100
-            cer = calc_cer(target, pred) * 100
+            norm_target = BaseTextEncoder.normalize_text()
+            wer = calc_wer(norm_target, pred) * 100
+            cer = calc_cer(norm_target, pred) * 100
             to_log_pred.append(
                 f"true: '{target}' | pred: '{pred}' "
                 f"| wer: {wer:.2f} | cer: {cer:.2f}"

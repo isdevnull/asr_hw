@@ -21,5 +21,5 @@ class ArgmaxWERMetric(BaseMetric):
                 pred_text = self.text_encoder.ctc_decode(log_prob_vec)
             else:
                 pred_text = self.text_encoder.decode(log_prob_vec)
-            wers.append(calc_wer(target_text, pred_text))
+            wers.append(calc_wer(BaseTextEncoder.normalize_text(target_text), pred_text))
         return sum(wers) / len(wers)

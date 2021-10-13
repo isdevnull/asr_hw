@@ -21,5 +21,5 @@ class ArgmaxCERMetric(BaseMetric):
                 pred_text = self.text_encoder.ctc_decode(log_prob_vec)
             else:
                 pred_text = self.text_encoder.decode(log_prob_vec)
-            cers.append(calc_cer(target_text, pred_text))
+            cers.append(calc_cer(BaseTextEncoder.normalize_text(target_text), pred_text))
         return sum(cers) / len(cers)
