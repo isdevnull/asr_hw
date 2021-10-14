@@ -207,9 +207,9 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
         predictions = log_probs.cpu().argmax(-1)
-        pred_texts = [self.text_encoder.ctc_decode(p) for p in predictions]
+        pred_texts = [self.text_encoder.ctc_decode(p)[:int(l)] for p, l in zip(predictions, log_probs_length)]
         argmax_pred_texts = [
-            self.text_encoder.decode(p)[: int(l)]
+            self.text_encoder.decode(p)[:int(l)]
             for p, l in zip(predictions, log_probs_length)
         ]
         tuples = list(zip(pred_texts, text, argmax_pred_texts))
