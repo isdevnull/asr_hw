@@ -1,6 +1,7 @@
 from operator import xor
 
-from torch.utils.data import DataLoader, ChainDataset
+from torch.utils.data import DataLoader, ChainDataset, Subset
+import torch
 
 import hw_asr.augmentations
 import hw_asr.batch_sampler as batch_sampler_module
@@ -32,6 +33,8 @@ def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
             dataset = ChainDataset(datasets)
         else:
             dataset = datasets[0]
+
+        dataset = Subset(dataset, torch.arange(20))
 
         # select batch size or batch sampler
         assert xor("batch_size" in params, "batch_sampler" in params), \
