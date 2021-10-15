@@ -34,7 +34,7 @@ def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
         else:
             dataset = datasets[0]
 
-        dataset = Subset(dataset, torch.arange(20))
+        dataset = Subset(dataset, torch.arange(32))
 
         # select batch size or batch sampler
         assert xor("batch_size" in params, "batch_sampler" in params), \

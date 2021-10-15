@@ -16,7 +16,7 @@
     "spectrogram": []
   },
   "arch": {
-    "type": "BaselineModel",
+    "type": "BaselineLSTM",
     "args": {
       "n_feats": 128,
       "fc_hidden": 1024
@@ -24,7 +24,7 @@
   },
   "data": {
     "train": {
-      "batch_size": 4,
+      "batch_size": 16,
       "num_workers": 5,
       "datasets": [
         {
@@ -38,7 +38,7 @@
       ]
     },
     "val": {
-      "batch_size": 4,
+      "batch_size": 16,
       "num_workers": 5,
       "datasets": [
         {
@@ -80,14 +80,14 @@
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 50,
+      "epochs": 75,
       "anneal_strategy": "cos",
       "max_lr": 4e-3,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 75,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
