@@ -180,8 +180,8 @@ class Trainer(BaseTrainer):
             self._log_spectrogram(batch["spectrogram"], batch["spectrogram_length"])
 
         # add histogram of model parameters to the tensorboard
-        for name, p in self.model.named_parameters():
-            self.writer.add_histogram(name, p, bins="auto")
+        #for name, p in self.model.named_parameters():
+        #    self.writer.add_histogram(name, p, bins="auto")
         return self.valid_metrics.result()
 
     def _progress(self, batch_idx):
