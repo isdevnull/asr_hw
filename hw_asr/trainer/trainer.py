@@ -234,7 +234,7 @@ class Trainer(BaseTrainer):
     def _log_spectrogram(self, spectrogram_batch, spectrogram_length):
         zipped_values = list(zip(spectrogram_batch, spectrogram_length))
         spectrogram, spectrogram_len = random.choice(zipped_values)
-        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.T[:, :spectrogram_len].cpu().log()))
+        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.T[:, :spectrogram_len].cpu()))
         self.writer.add_image("spectrogram", ToTensor()(image))
 
     @torch.no_grad()
