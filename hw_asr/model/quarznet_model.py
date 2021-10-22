@@ -110,7 +110,6 @@ class QuarzNet(BaseModel):
         self.conv4 = ConvBnReLUBlock(current_in_channels * 2, n_class, kernel_size=1, bias=False)
 
     def forward(self, spectrogram, *args, **kwargs):
-        print(spectrogram.shape)
         spectrogram = spectrogram.transpose(1, 2)
         spectrogram = self.conv1(spectrogram)
         for block in self.main_blocks:
@@ -119,7 +118,6 @@ class QuarzNet(BaseModel):
         spectrogram = self.conv3(spectrogram)
         spectrogram = self.conv4(spectrogram)
         spectrogram = spectrogram.transpose(1, 2)
-        print(spectrogram.shape)
         return {"logits": spectrogram}
 
     def transform_input_lengths(self, input_lengths):
