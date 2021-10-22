@@ -217,7 +217,7 @@ class Trainer(BaseTrainer):
         shuffle(tuples)
         to_log_pred = []
         to_log_pred_raw = []
-        for pred, target, raw_pred in tuples[:examples_to_log]:
+        for pred, target, raw_pred in tuples:
             norm_target = BaseTextEncoder.normalize_text(target)
             wer = calc_wer(norm_target, pred) * 100
             cer = calc_cer(norm_target, pred) * 100
