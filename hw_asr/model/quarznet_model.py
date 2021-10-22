@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 from typing import List
 from math import ceil
@@ -108,14 +109,18 @@ class QuarzNet(BaseModel):
         # C4 Block
         self.conv4 = ConvBnReLUBlock(current_in_channels * 2, n_class, kernel_size=1, bias=False)
 
-    def forward(self, X, *args, **kwargs):
-        X = self.conv1(X)
+    def forward(self, spectrogram, *args, **kwargs):
+        print(spectrogram.shape)
+        spectrogram = spectrogram.transpose(1, 2)
+        spectrogram = self.conv1(spectrogram)
         for block in self.main_blocks:
-            X = block(X)
-        X = self.conv2(X)
-        X = self.conv3(X)
-        X = self.conv4(X)
-        return {"logits": X}
+            spectrogram = block(spectrogram)
+        spectrogram = self.conv2(spectrogram)
+        spectrogram = self.conv3(spectrogram)
+        spectrogram = self.conv4(spectrogram)
+        spectrogram = spectrogram.transpose(1, 2)
+        print(spectrogram.shape)
+        return {"logits": spectrogram}
 
     def transform_input_lengths(self, input_lengths):
-        return input_lengths  # we don't reduce time dimension here
+        return torch.round(input_lengths / 2).int()
