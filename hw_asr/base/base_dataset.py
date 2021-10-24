@@ -51,6 +51,7 @@ class BaseDataset(Dataset):
         # It would be easier to write length-based batch samplers later
         index = self._sort_index(index)
         self._index = index
+        self.data_ids = list(range(len(self._index)))
 
     def __getitem__(self, ind):
         data_dict = self._index[ind]

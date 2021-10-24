@@ -1,4 +1,6 @@
 from operator import xor
+from tqdm import trange
+import logging
 
 from torch.utils.data import DataLoader, ConcatDataset
 
@@ -8,6 +10,8 @@ import hw_asr.datasets
 from hw_asr.base.base_text_encoder import BaseTextEncoder
 from hw_asr.collate_fn.collate import collate_fn
 from hw_asr.utils.parse_config import ConfigParser
+
+logger = logging.getLogger(__name__)
 
 
 def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
@@ -42,18 +46,24 @@ def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
             bs = params["batch_size"]
             shuffle = True
             batch_sampler = None
+            dataloader = DataLoader(
+                dataset, batch_size=bs, collate_fn=collate_fn,
+                shuffle=shuffle, num_workers=num_workers,
+                batch_sampler=batch_sampler, drop_last=drop_last
+            )
         elif "batch_sampler" in params:
+            # get frame length for batch sampler
+            logger.info("Getting lengths for dynamic batch sampling")
+            sample_lengths = [len(dataset[i]['audio']) for i in trange(len(dataset))]
             batch_sampler = configs.init_obj(params["batch_sampler"], batch_sampler_module,
-                                             data_source=dataset)
-            bs, shuffle = 1, False
+                                             dataset=dataset, lengths_list=sample_lengths, drop_last=drop_last)
+            dataloader = DataLoader(
+                dataset, collate_fn=collate_fn,
+                num_workers=num_workers,
+                batch_sampler=batch_sampler
+            )
         else:
             raise Exception()
 
-        # create dataloader
-        dataloader = DataLoader(
-            dataset, batch_size=bs, collate_fn=collate_fn,
-            shuffle=shuffle, num_workers=num_workers,
-            batch_sampler=batch_sampler, drop_last=drop_last
-        )
         dataloaders[split] = dataloader
     return dataloaders
