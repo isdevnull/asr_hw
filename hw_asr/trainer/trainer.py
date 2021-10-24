@@ -180,8 +180,8 @@ class Trainer(BaseTrainer):
             self._log_spectrogram(batch["spectrogram"], batch["spectrogram_length"])
 
         # add histogram of model parameters to the tensorboard
-        for name, p in self.model.named_parameters():
-            self.writer.add_histogram(name, p, bins="auto")
+        #for name, p in self.model.named_parameters():
+        #    self.writer.add_histogram(name, p, bins="auto")
         return self.valid_metrics.result()
 
     def _progress(self, batch_idx):
@@ -234,7 +234,7 @@ class Trainer(BaseTrainer):
     def _log_spectrogram(self, spectrogram_batch, spectrogram_length):
         zipped_values = list(zip(spectrogram_batch, spectrogram_length))
         spectrogram, spectrogram_len = random.choice(zipped_values)
-        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.T[:, :spectrogram_len].cpu().log()))
+        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.T[:, :spectrogram_len].cpu()))
         self.writer.add_image("spectrogram", ToTensor()(image))
 
     @torch.no_grad()
