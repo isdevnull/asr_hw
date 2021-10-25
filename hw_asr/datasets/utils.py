@@ -54,7 +54,7 @@ def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
         elif "batch_sampler" in params:
             # get frame length for batch sampler
             logger.info("Getting lengths for dynamic batch sampling")
-            sample_lengths = [len(dataset[i]['audio']) for i in trange(len(dataset))]
+            sample_lengths = [dataset[i]['frames'] for i in trange(len(dataset))]
             batch_sampler = configs.init_obj(params["batch_sampler"], batch_sampler_module,
                                              dataset=dataset, lengths_list=sample_lengths, drop_last=drop_last)
             dataloader = DataLoader(

@@ -60,6 +60,7 @@ class BaseDataset(Dataset):
         audio_wave, audio_spec = self.process_wave(audio_wave)
         return {
             "audio": audio_wave,
+            "frames": len(audio_wave),
             "spectrogram": audio_spec,
             "duration": data_dict["audio_len"],
             "text": data_dict["text"],
