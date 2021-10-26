@@ -44,7 +44,7 @@ def main(config, out_file):
     results = []
 
     with torch.no_grad():
-        for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
+        for batch_num, batch in enumerate(tqdm(dataloaders["val"])):
             batch = Trainer.move_batch_to_device(batch, device)
             output = model(**batch)
             if type(output) is dict:
@@ -147,25 +147,21 @@ if __name__ == "__main__":
         test_data_folder = Path(args.test_data_folder).absolute().resolve()
         assert test_data_folder.exists()
         config.config["data"] = {
-            "test": {
+            "val": {
                 "batch_size": args.batch_size,
                 "num_workers": args.jobs,
                 "datasets": [
                     {
-                        "type": "CustomDirAudioDataset",
+                        "type": "LibrispeechDataset",
                         "args": {
-                            "audio_dir": str(test_data_folder / "audio"),
-                            "transcription_dir": str(
-                                test_data_folder / "transcriptions"
-                            ),
-                        },
-                    }
+                            "part": "test-clean"
+                        }
+                    },
                 ],
             }
         }
 
     assert config.config.get("data", {}).get("test", None) is not None
-    config["data"]["test"]["batch_size"] = args.batch_size
-    #config["data"]["test"]["n_jo"] = args.n_jobs
+    config["data"]["val"]["batch_size"] = args.batch_size
 
     main(config, args.output)
