@@ -52,6 +52,6 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert voc_size == len(self.ind2char)
         #beam_results, _, _, out_len = self.decoder.decode(probs.numpy())
         #hypos = [self.ctc_decode(beam_results[0][i][:out_len[0][i]]) for i in range(beam_size)]
-        beams = self.decoder.decode_beams(probs.numpy(), beam_width=beam_size)
+        beams = self.decoder.decode_beams(probs[:probs_length].numpy(), beam_width=beam_size)
         hypos = [beams[i][0] for i in range(len(beams[:10]))]
         return hypos
