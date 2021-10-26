@@ -8,6 +8,7 @@ from tqdm import tqdm
 
 import hw_asr.model as module_model
 from hw_asr.datasets.utils import get_dataloaders
+from hw_asr.metric.utils import calc_wer, calc_cer
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_asr.trainer import Trainer
 from hw_asr.utils import ROOT_PATH
@@ -42,7 +43,10 @@ def main(config, out_file):
     model.eval()
 
     results = []
-
+    cer_list_greedy = []
+    cer_list_beam = []
+    wer_list_beam = []
+    wer_list_greedy = []
     with torch.no_grad():
         for batch_num, batch in enumerate(tqdm(dataloaders["val"])):
             batch = Trainer.move_batch_to_device(batch, device)
@@ -65,10 +69,28 @@ def main(config, out_file):
                         "ground_trurh": batch["text"][i],
                         "pred_text_argmax": text_encoder.ctc_decode(argmax),
                         "pred_text_beam_search": text_encoder.ctc_beam_search(
-                            batch["probs"][i], batch["log_probs_length"][i], beam_size=100
+                            batch["probs"][i], batch["log_probs_length"][i], beam_size=10
                         )[:10],
                     }
                 )
+                target = results[-1]["ground_truth"]
+                pred_greedy = results[-1]["pred_text_argmax"]
+                pred_beam = results[-1]["pred_text_beam_search"][0]
+
+                cur_wer_beam = calc_wer(target, pred_beam)
+                cur_cer_beam = calc_cer(target, pred_beam)
+                cur_cer_greedy = calc_cer(target, pred_greedy)
+                cur_wer_greedy = calc_wer(target, pred_greedy)
+                print(f"Beam size = {100}; WER: {cur_wer_beam}; CER: {cur_cer_beam}")
+                print(f"Greedy; WER: {cur_wer_greedy}; CER: {cur_cer_greedy}")
+                wer_list_beam.append(cur_wer_beam)
+                wer_list_greedy.append(cur_wer_greedy)
+                cer_list_beam.append(cur_cer_beam)
+                cer_list_greedy.append(cur_wer_greedy)
+    print(f"Greedy WER: {sum(wer_list_greedy) / len(wer_list_greedy)}")
+    print(f"Beam WER: {sum(wer_list_beam) / len(wer_list_beam)}")
+    print(f"Beam CER: {sum(cer_list_beam) / len(cer_list_beam)}")
+    print(f"Greedy CER: {sum(cer_list_greedy) / len(cer_list_greedy)}")
     with Path(out_file).open("w") as f:
         json.dump(results, f, indent=2)
 
