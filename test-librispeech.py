@@ -69,7 +69,7 @@ def main(config, out_file):
                         "ground_truth": batch["text"][i],
                         "pred_text_argmax": text_encoder.ctc_decode(argmax),
                         "pred_text_beam_search": text_encoder.ctc_beam_search(
-                            batch["probs"][i], batch["log_probs_length"][i], beam_size=10
+                            batch["probs"][i], batch["log_probs_length"][i], beam_size=100
                         )[:10],
                     }
                 )
@@ -81,8 +81,8 @@ def main(config, out_file):
                 cur_cer_beam = calc_cer(target, pred_beam)
                 cur_cer_greedy = calc_cer(target, pred_greedy)
                 cur_wer_greedy = calc_wer(target, pred_greedy)
-                #print(f"Beam size = {100}; WER: {cur_wer_beam}; CER: {cur_cer_beam}")
-                #print(f"Greedy; WER: {cur_wer_greedy}; CER: {cur_cer_greedy}")
+                print(f"Beam size = {100}; WER: {cur_wer_beam}; CER: {cur_cer_beam}")
+                print(f"Greedy; WER: {cur_wer_greedy}; CER: {cur_cer_greedy}")
                 wer_list_beam.append(cur_wer_beam)
                 wer_list_greedy.append(cur_wer_greedy)
                 cer_list_beam.append(cur_cer_beam)
