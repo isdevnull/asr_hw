@@ -44,7 +44,7 @@ def main(config, out_file):
     results = []
 
     with torch.no_grad():
-        for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
+        for batch_num, batch in enumerate(tqdm(dataloaders["val"])):
             batch = Trainer.move_batch_to_device(batch, device)
             output = model(**batch)
             if type(output) is dict:
@@ -164,8 +164,8 @@ if __name__ == "__main__":
             }
         }
 
-    #assert config.config.get("data", {}).get("test", None) is not None
-    config["data"]["val"]["batch_size"] = args.batch_size
+    assert config.config.get("data", {}).get("test", None) is not None
+    config["data"]["test"]["batch_size"] = args.batch_size
     #config["data"]["test"]["n_jo"] = args.n_jobs
 
     main(config, args.output)
