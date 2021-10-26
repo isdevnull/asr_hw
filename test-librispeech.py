@@ -144,8 +144,8 @@ if __name__ == "__main__":
 
     # if `--test-data-folder` was provided, set it as a default test set
     if args.test_data_folder is not None:
-        test_data_folder = Path(args.test_data_folder).absolute().resolve()
-        assert test_data_folder.exists()
+        #test_data_folder = Path(args.test_data_folder).absolute().resolve()
+        #assert test_data_folder.exists()
         config.config["data"] = {
             "val": {
                 "batch_size": args.batch_size,
@@ -154,14 +154,14 @@ if __name__ == "__main__":
                     {
                         "type": "LibrispeechDataset",
                         "args": {
-                            "part": "test-clean"
+                            "part": args.test_data_folder
                         }
                     },
                 ],
             }
         }
 
-    assert config.config.get("data", {}).get("test", None) is not None
+    assert config.config.get("data", {}).get("val", None) is not None
     config["data"]["val"]["batch_size"] = args.batch_size
 
     main(config, args.output)
