@@ -22,18 +22,6 @@ class CTCCharTextEncoder(CharTextEncoder):
         self.char2ind = {v: k for k, v in self.ind2char.items()}
         self.labels = list(self.char2ind.keys())
         self.labels[0] = ""  # for decoder empty token should be empty
-        # self.decoder = CTCBeamDecoder(
-        #     self.labels,
-        #     model_path=None,
-        #     alpha=0,
-        #     beta=0,
-        #     cutoff_top_n=len(self.labels),
-        #     cutoff_prob=1.0,
-        #     beam_width=100,
-        #     num_processes=4,
-        #     blank_id=0,
-        #     log_probs_input=True
-        # )
         self.decoder = build_ctcdecoder(self.labels)
 
     def ctc_decode(self, inds: torch.tensor) -> str:
