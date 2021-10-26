@@ -23,6 +23,7 @@ class CTCCharTextEncoder(CharTextEncoder):
             self.ind2char[max(self.ind2char.keys()) + 1] = text
         self.char2ind = {v: k for k, v in self.ind2char.items()}
         self.labels = list(self.char2ind.keys())
+        self.labels[0] = ""  # for decoder empty token should be empty
         # self.decoder = CTCBeamDecoder(
         #     self.labels,
         #     model_path=None,
