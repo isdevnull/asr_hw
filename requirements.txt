@@ -16,3 +16,4 @@ editdistance~=0.6.0
 Pillow~=8.3.2
 
 librosa~=0.8.1
+pyctcdecode~=0.1.1
